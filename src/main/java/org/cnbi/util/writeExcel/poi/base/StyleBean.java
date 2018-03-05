@@ -9,12 +9,12 @@ public class StyleBean {
 	 * 垂直对齐
 	 */
 	public static final String VERTICAL_ALIGNMENT = "verticalAlignment";
-	private int verticalAlignment;
+	private int verticalAlignment = 3;
    /**
     * 水平对齐
     */
 	public static final String ALIGNMENT = "alignment";
-	private int alignment;
+	private int alignment =3;
 	
 	public static final String BORDER_TOP = "borderTop";
 	private int borderTop;
@@ -43,7 +43,7 @@ public class StyleBean {
 	 * FillPatternType
 	 */
 	public static final String FILL_PATTERN = "fillPattern";
-	private int fillPattern;
+	private int fillPattern = 0;
 	/**
 	 * 背景色
 	 */
@@ -114,6 +114,8 @@ public class StyleBean {
 		this.boldWeight = boldWeight;
 		this.isItalic = isItalic;
 		this.underline = underline;
+		this.typeOffset=0;
+		this.isStrikeout=false;
 	}
 	
 	public StyleBean(int verticalAlignment, int alignment, int borderTop, int borderBottom, int borderLeft,

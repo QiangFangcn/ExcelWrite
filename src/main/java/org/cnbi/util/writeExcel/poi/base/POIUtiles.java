@@ -11,21 +11,43 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-
+/**
+ * 
+ * @author Administrator
+ *
+ */
 public class POIUtiles {
 	
-	
+	/**
+	 * 颜色对象（java.awt.Color）转十六进制字符串
+	 * @param color 
+	 * @return 
+	 */
 	public static String color2Hex(Color color){
             return color2Hex(color.getRed(), color.getGreen(), color.getBlue());
 	}
+	/**
+	 * 颜色RBG值转十六进制字符串
+	 * @param red
+	 * @param green
+	 * @param blue
+	 * @return
+	 */
 	public static String color2Hex(int red, int green, int blue){
 		if((0<=red&&red<=255)&&(0<=green&&green<=255)&&(0<=blue&&blue<=255)){  
-            String str1 = new String("#");  
-            str1 = str1 +Integer.toHexString(red)+Integer.toHexString(green)+Integer.toHexString(blue);  
+            String str1 = "#" 
+            		+(red == 0 ?"00":Integer.toHexString(red))
+            		+(green == 0 ?"00":Integer.toHexString(green))
+            		+(blue == 0 ?"00":Integer.toHexString(blue));  
             return str1;
 		}
 		return null;
 	}
+	/**
+	 * 十六进制字符串转颜色对象（java.awt.Color）
+	 * @param colorHex
+	 * @return 
+	 */
 	public static Color hex2Color(String colorHex){
 		Color color = null;
 		if(colorHex.startsWith("#") && colorHex.length() == 7){
@@ -62,15 +84,35 @@ public class POIUtiles {
 		return color;
 	}
 	
+	/**
+	 * 获取颜色
+	 * @param wb
+	 * @param color
+	 * @return
+	 */
 	public static XSSFColor getXSSFColor(SXSSFWorkbook wb, Object color){
-		XSSFColor xssfColor = new XSSFColor(getColor(color));
+		Color clr = getColor(color);
+		XSSFColor xssfColor = new XSSFColor(new byte[]{(byte)clr.getAlpha(),(byte)clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()});
+		xssfColor.setAuto(true);
 		return xssfColor;
 	}
-	
+	/**
+	 * 获取字体
+	 * @param wb
+	 * @param styleBean
+	 * @return
+	 */
 	public static XSSFFont getXSSFFont(SXSSFWorkbook wb, StyleBean styleBean){
 		String color = styleBean.getFontColor();
 		XSSFColor xssfColor = getXSSFColor(wb, color);
-		return getXSSFFont(wb, styleBean.getFontSize(), styleBean.getFontName(), styleBean.getBoldWeight(), styleBean.getIsItalic(), styleBean.getUnderline(), styleBean.getIsStrikeout(), styleBean.getTypeOffset(), xssfColor);
+		return getXSSFFont(wb, styleBean.getFontSize(), 
+				styleBean.getFontName(), 
+				styleBean.getBoldWeight(), 
+				styleBean.getIsItalic(), 
+				styleBean.getUnderline(), 
+				styleBean.getIsStrikeout(), 
+				styleBean.getTypeOffset(), 
+				xssfColor);
 	}
 	
 	/**
@@ -86,7 +128,7 @@ public class POIUtiles {
 	 * @param color 字体颜色 
 	 * @return 
 	 */
-	public static XSSFFont getXSSFFont(SXSSFWorkbook wb, int fontSize, String fontName, int boldWeight, boolean isItalic, byte underLine, boolean isStrikeout, int typeOffset, XSSFColor color ){
+	public static XSSFFont getXSSFFont(SXSSFWorkbook wb, int fontSize, String fontName, int boldWeight, Boolean isItalic, byte underLine, Boolean isStrikeout, int typeOffset, XSSFColor color ){
 		XSSFFont font = findFont(wb, (short)boldWeight, color, (short)fontSize, fontName, isItalic, isStrikeout, (short)typeOffset, underLine);
 		if(font == null){
 			font = creatXSSFFont(wb, fontSize, fontName, boldWeight, isItalic, underLine, isStrikeout, typeOffset, color);
@@ -95,7 +137,7 @@ public class POIUtiles {
 	}
 	
 	/**
-	 * 查询字体
+	 * 查找字体
 	 * @param wb
 	 * @param boldWeight
 	 * @param color
@@ -108,21 +150,35 @@ public class POIUtiles {
 	 * @return 
 	 */
 	private static XSSFFont findFont(SXSSFWorkbook wb, short boldWeight, XSSFColor color, short fontSize, String fontName,
-			boolean isItalic, boolean isStrikeout, short typeOffset, byte underLine) {
+			boolean italic, boolean strikeout, short typeOffset, byte underLine) {
 		
 		List<XSSFFont> fonts = wb.getXSSFWorkbook().getStylesSource().getFonts();
 		for (XSSFFont font : fonts) {
-			if (	(font.getBoldweight() == boldWeight)
-					&& font.getXSSFColor().equals(color)
-					&& font.getFontHeight() == fontSize
-					&& font.getFontName().equals(fontName)
-					&& font.getItalic() == isItalic
-					&& font.getStrikeout() == isStrikeout
-					&& font.getTypeOffset() == typeOffset
-					&& font.getUnderline() == underLine)
-			{
+			boolean isboldWeight = font.getBoldweight() == boldWeight;
+			boolean iscolor = font.getXSSFColor().getARGBHex().equals(color.getARGBHex());
+			boolean isfontSize = font.getFontHeight() == fontSize;
+			boolean isfontName = font.getFontName().equals(fontName);
+			boolean isitalic = font.getItalic() == italic;
+			boolean isstrikeout = font.getStrikeout() == strikeout;
+			boolean istypeOffset = font.getTypeOffset() == typeOffset;
+			boolean isunderLine = font.getUnderline() == underLine;
+			
+			if(isboldWeight && iscolor && isfontSize && isfontName 
+					&& isitalic && isstrikeout && istypeOffset && isunderLine){
 				return font;
 			}
+			
+//			if ( font.getBoldweight() == boldWeight 
+//					&& font.getXSSFColor().getARGBHex().equals(color.getARGBHex())
+//					&& font.getFontHeight() == fontSize
+//					&& font.getFontName().equals(fontName)
+//					&& font.getItalic() == italic
+//					&& font.getStrikeout() == strikeout
+//					&& font.getTypeOffset() == typeOffset
+//					&& font.getUnderline() == underLine)
+//			{
+//				return font;
+//			}
 		}
 		return null;
 	}
@@ -140,7 +196,7 @@ public class POIUtiles {
 	 * @param color 字体颜色
 	 * @return
 	 */
-	public static XSSFFont creatXSSFFont(SXSSFWorkbook wb,  int fontSize, String fontName, int boldWeight, boolean isItalic, byte underLine, boolean isStrikeout, int typeOffset, XSSFColor color){
+	public static XSSFFont creatXSSFFont(SXSSFWorkbook wb,  int fontSize, String fontName, int boldWeight, Boolean isItalic, byte underLine, Boolean isStrikeout, int typeOffset, XSSFColor color){
 		XSSFFont font = (XSSFFont) wb.createFont();
 		font.setTypeOffset((short)typeOffset);
 		font.setStrikeout(isStrikeout);
@@ -167,10 +223,10 @@ public class POIUtiles {
 		if(style == null){
 			
 			XSSFColor fgc = getXSSFColor(wb, styleBean.getFillForegroundColor());
-			int fgcidx = fgc.getIndexed();
+//			int fgcidx = fgc.getIndexed();
 			
 			XSSFColor bgc = getXSSFColor(wb, styleBean.getFillBackgroundColor());
-			int bgcidx = bgc.getIndexed();
+//			int bgcidx = bgc.getIndexed();
 			
 			XSSFColor topc = getXSSFColor(wb, styleBean.getTopBorderColor());
 			
@@ -184,7 +240,7 @@ public class POIUtiles {
 			int fontidx = font.getIndex();
 			
 			style = creatStyle(wb,  styleBean.getAlignment(), styleBean.getVerticalAlignment(), 
-					bgcidx, fgcidx, styleBean.getFillPattern(), 
+					bgc, fgc, styleBean.getFillPattern(), 
 					styleBean.getBorderTop(), styleBean.getBorderBottom(), styleBean.getBorderLeft(), styleBean.getBorderRight(), 
 					topc, bottomc, leftc, rightc, fontidx, styleBean.getDataFormat());
 			cacheStyleMap.put(styleBean, style);
@@ -214,7 +270,7 @@ public class POIUtiles {
 	 * @return
 	 */
 	public static CellStyle  creatStyle(SXSSFWorkbook wb, int align, int vertical, 
-			int bgColoridx, int fgColoridx, int fp, 
+			XSSFColor bgColor, XSSFColor fgColor, int fp, 
 		int borderTop, int borderBottom, int borderLeft, int borderRight,
 		XSSFColor topBorderColor, XSSFColor bottomBorderColor, XSSFColor leftBorderColor, XSSFColor rightBorderColor,
 		int fontidx,String formatText){
@@ -223,9 +279,9 @@ public class POIUtiles {
 		
 		// 填充
 		cellstyle.setFillPattern((short) fp);
-		cellstyle.setFillForegroundColor((short)bgColoridx);
+		cellstyle.setFillForegroundColor(bgColor);
 		//背景色
-		cellstyle.setFillBackgroundColor((short)bgColoridx);
+		cellstyle.setFillBackgroundColor(bgColor);
 		
 		// 设置边框
 		cellstyle.setBorderTop((short)borderTop);
