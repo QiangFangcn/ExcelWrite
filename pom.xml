@@ -22,6 +22,28 @@
             <version>2.0.0</version>
         </dependency>
         -->
+        
+        <dependency>
+         <groupId>org.jxls</groupId>
+         <artifactId>jxls</artifactId> 
+         <version>2.4.3</version> 
+     </dependency>
+     <dependency>
+         <groupId>org.jxls</groupId>
+         <artifactId>jxls-poi</artifactId>
+         <version>1.0.14</version> 
+     </dependency>
+     <dependency>
+         <groupId>org.jxls</groupId>
+         <artifactId>jxls-jexcel</artifactId>
+         <version>1.0.6</version>
+     </dependency>
+     <dependency>
+         <groupId>org.jxls</groupId>
+         <artifactId>jxls-reader</artifactId>
+         <version>2.0.3</version>
+     </dependency>
+        
          <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -33,7 +55,6 @@
             <version>${poi-ooxml-schemas.version}</version>
         </dependency>
         
-        <!-- 
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -45,7 +66,6 @@
             <artifactId>poi-scratchpad</artifactId>
             <version>${poi-scratchpad.version}</version>
         </dependency>
-         -->
         
         <dependency>
             <groupId>com.alibaba</groupId>
