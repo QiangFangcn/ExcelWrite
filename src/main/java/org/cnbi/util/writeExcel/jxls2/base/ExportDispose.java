@@ -5,19 +5,12 @@ import java.util.Map;
 
 public interface ExportDispose {
 	
-	Map<String,ExportConfig> getExportConfigMap();
+	Map<String, Map<String, Object>> getExportConfigMap();
 	
-	void setExportConfigMap(Map<String,ExportConfig> exportConfigMap);
-
-
-	boolean isNeedPage();
-
-	int getCurrentPage();
-	
-	Map getParameters();
+	void setExportConfigMap(Map<String,Map<String, Object>> exportConfigMap);
 	
 	List getDatas(String sheetName);
 
-	String getDatasKey();
-
+	Map<String, Object> getCurrentExportConfig();
+	
 }

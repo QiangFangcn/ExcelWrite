@@ -1,74 +1,178 @@
 package org.cnbi.util.writeExcel.jxls2.test;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.cnbi.util.writeExcel.jxls2.base.AbstractExportDispose;
-import org.cnbi.util.writeExcel.jxls2.base.ExportConfig;
+import org.cnbi.util.writeExcel.jxls2.base.ExportConfigUtil;
 
 public class ExportDisposeImp extends AbstractExportDispose {
-
-	public ExportDisposeImp() {
-	}
-
+	
+	Pattern p = Pattern.compile(":[\\S]*");
+	
+	public ExportDisposeImp(){};
+	
 	@Override
 	public List getDatas(String sheetName){
 		//获取当前sheet配置
-		ExportConfig currentExportConfig = getCurrentExportConfig();
+		Map<String, Object> currentExportConfig = getCurrentExportConfig();
 		//判断是否存在配置或是否是当前sheet页的配置
 		if(currentExportConfig == null || !sheetName.equals(currentExportConfig.get("sheetname"))){
 			currentExportConfig = getExportConfig(sheetName);
+			setCurrentExportConfig(currentExportConfig);
+		}
+		if(currentExportConfig == null){
+			throw new RuntimeException("不存在《"+sheetName+"》sheet页配置！");
 		}
 		
-		String sql = currentExportConfig.getSql();
-		if(sql == null){
-			String sqlkey = currentExportConfig.getSqlkey();
-			//获取sql
-			
-			// 处理sql
-			
-		}
-		int currentpage = currentExportConfig.getCurrentpage();
-		int perpage = currentExportConfig.getPerpage();
-		boolean isNeedPage = currentExportConfig.isNeedPage();
-		if(currentpage > 0){
-			currentpage+=1;
-		}else{
-			int pagecount = 0;
-			currentpage = 1;
-			//查询数据数量
-			int datacount = 1000;
-			//2007最大行数
-			int maxrow = SpreadsheetVersion.EXCEL2007.getMaxRows();
-			//判断预设每页记录数是否大于excel最大行数  如 大于  就重新设置成Excel最大数
-			if(perpage > maxrow){
-				perpage=maxrow;
-				currentExportConfig.setPerpage(maxrow);
-			}
-			//是否需要分页
-			if(datacount > perpage){
-				pagecount = datacount/perpage;
-				pagecount += datacount%perpage>0?1:0;
-				isNeedPage = true;
-				currentExportConfig.setNeedPage(isNeedPage);
-				currentExportConfig.setPagecount(pagecount);
-			}
-		}
-		//设置当前查询的页
-		currentExportConfig.setCurrentpage(currentpage);
-		
-		
+		int currentpage = ExportConfigUtil.getCurrentpage(currentExportConfig);
+		int perpage = ExportConfigUtil.getPerpage(currentExportConfig);
+		boolean isNeedPage = ExportConfigUtil.isNeedPage(currentExportConfig);
 		List datas = null;
-		if(isNeedPage){
-			//分页查询
+		if(perpage == 0){//无分页  单sheet页涉及多区域的(多sql的)
 			
+			List sqls = ExportConfigUtil.getSqls(currentExportConfig);
+			List sqlskey = ExportConfigUtil.getSqlskey(currentExportConfig);
 			
+			for(int si=0,sqlsize=sqls.size(); si < sqlsize; si++){
+				String sql = (String) sqls.get(si);
+				if(sql == null){
+					String sqlkey = (String) sqlskey.get(si);
+					//获取sql
+					sql = getSql(sqlkey);
+					if(sql == null){
+//						throw new RuntimeException("《"+sqlkey+"》未配置sql！");
+						continue;
+					}
+					sql = disposeSql(currentExportConfig, sql);
+				}
+				
+				String dataskey = ExportConfigUtil.getDataskey(currentExportConfig, si);
+				
+				datas = queryDatas(sql);
+				datas = datas==null? new ArrayList<Object>():datas;
+				//设置模版数据集
+				ExportConfigUtil.put(ExportConfigUtil.getTplParameters(currentExportConfig), dataskey, datas);
+			}
+		}else{//有分页功能
 			
-		}else{
+			String sql = ExportConfigUtil.getSql(currentExportConfig);
+			if(sql == null){
+				String sqlkey = ExportConfigUtil.getSqlkey(currentExportConfig);
+				//获取sql
+				sql = getSql(sqlkey);
+				if(sql == null){
+					throw new RuntimeException("《"+sheetName+"》未配置sql！");
+				}
+				sql = disposeSql(currentExportConfig, sql);
+			}
 			
+			if(currentpage > 0){
+				currentpage+=1;
+			}else{
+				int pagecount = 0;
+				currentpage = 1;
+				//查询数据数量
+				int datacount = getDataCount(sql);
+				//2007最大行数
+				int maxrow = SpreadsheetVersion.EXCEL2007.getMaxRows();
+				//判断预设每页记录数是否大于excel最大行数  如 大于  就重新设置成Excel最大数
+				if(perpage > maxrow){
+					perpage=maxrow;
+					ExportConfigUtil.setPerpage(currentExportConfig, maxrow);
+				}
+				//是否需要分页
+				if(datacount > perpage){
+					pagecount = datacount/perpage;
+					pagecount += datacount%perpage>0?1:0;
+					isNeedPage = true;
+					ExportConfigUtil.setNeedPage(currentExportConfig, isNeedPage);
+					ExportConfigUtil.setPagecount(currentExportConfig, pagecount);
+				}
+			}
+			//设置当前查询的页
+			ExportConfigUtil.setCurrentpage(currentExportConfig, currentpage);
 			
+			String dataskey = ExportConfigUtil.getDataskey(currentExportConfig, 0);
+			
+			if(isNeedPage){
+				//分页查询 
+				datas = queryPageDatas(currentpage, perpage, sql);
+				if(datas == null){
+					currentpage = 0;
+					ExportConfigUtil.setCurrentpage(currentExportConfig, currentpage);
+				}
+			}else{
+				datas = queryDatas(sql);
+			}
+			datas = datas==null? new ArrayList<Object>():datas;
+			//设置模版数据集
+			ExportConfigUtil.put(ExportConfigUtil.getTplParameters(currentExportConfig), dataskey, datas);
 		}
+		
 		return datas;
 	}
-
+	/**
+	 * 查询数据
+	 * @param sql
+	 * @return
+	 */
+	private List queryDatas(String sql) {
+		List datas=null;
+//		datas = handleService.queryListMapBean(sql, null);
+		return datas;
+	}
+	/**
+	 * 查询分页数据
+	 * @param currentpage
+	 * @param perpage
+	 * @param sql
+	 * @return
+	 */
+	private List queryPageDatas(int currentpage, int perpage, String sql) {
+		List datas = null;
+//		String pagesql = handleService.getPaginationSql(sql, currentpage, perpage);
+//		datas = queryDatas(pagesql);
+		return datas;
+	}
+	
+	/**
+	 * 查询数据记录
+	 * @param sql
+	 * @return
+	 */
+	private int getDataCount(String sql) {
+		int coutn = 0;
+		return coutn;
+	}
+	/**
+	 * 获取sql
+	 * @param sqlkey
+	 * @return
+	 */
+	private String getSql(String sqlkey) {
+		String sql = "";
+		
+		return sql;
+	}
+	/**
+	 * 处理sql
+	 * @param currentExportConfig
+	 * @param sql
+	 * @return
+	 */
+	private String disposeSql(Map<String, Object> currentExportConfig, String sql) {
+		Matcher m = p.matcher(sql);
+		if(m.find()){
+			Map<String, Object> map = ExportConfigUtil.getSqlParameters(currentExportConfig);
+			for(String key :  map.keySet()){
+				sql = sql.replaceAll((key.startsWith(":")?":":"")+key, (map.get(key) == null ?"":map.get(key).toString()));
+			}
+		}
+		return sql;
+	}
 }
