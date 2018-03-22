@@ -1,0 +1,10 @@
+[
+{"scode":"000101", "sname":"原材料", "spcode":"0001", "ssource":"01"},
+{"scode":"000102", "sname":"辅助材料", "spcode":"0001", "ssource":"02"},
+{"scode":"000201", "sname":"半成品", "spcode":"0002", "ssource":"04"},
+{"scode":"000202", "sname":"产成品", "spcode":"0002", "ssource":"05"},
+{"scode":"000203", "sname":"发出商品", "spcode":"0002"},
+{"scode":"000204", "sname":"在产品", "spcode":"0003", "ssource":"03"},
+{"scode":"000301", "sname":"其他存货", "spcode":"0002", "ssource":"06"},
+{"scode":"000302", "sname":"委托加工物资", "spcode":"0003"}
+]

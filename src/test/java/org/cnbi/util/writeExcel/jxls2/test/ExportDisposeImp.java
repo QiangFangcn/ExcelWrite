@@ -1,20 +1,33 @@
 package org.cnbi.util.writeExcel.jxls2.test;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.cnbi.tools.FileUtil;
+import org.cnbi.tools.JsonUtil;
 import org.cnbi.util.writeExcel.jxls2.base.AbstractExportDispose;
 import org.cnbi.util.writeExcel.jxls2.base.ExportConfigUtil;
+
 
 public class ExportDisposeImp extends AbstractExportDispose {
 	
 	Pattern p = Pattern.compile(":[\\S]*");
 	
+	Map<String, Object> cachedb = new HashMap<String, Object>();
+	private String dataFileDir;
+	
+	
 	public ExportDisposeImp(){};
+	
+	public ExportDisposeImp(String dataFileDir){
+		this.dataFileDir = dataFileDir;
+	};
 	
 	@Override
 	public List getDatas(String sheetName){
@@ -44,16 +57,17 @@ public class ExportDisposeImp extends AbstractExportDispose {
 					String sqlkey = (String) sqlskey.get(si);
 					//获取sql
 					sql = getSql(sqlkey);
-					if(sql == null){
-//						throw new RuntimeException("《"+sqlkey+"》未配置sql！");
-						continue;
+					if(sql != null){
+////						throw new RuntimeException("《"+sqlkey+"》未配置sql！");
+//						continue;
+						sql = disposeSql(currentExportConfig, sql);
 					}
-					sql = disposeSql(currentExportConfig, sql);
 				}
 				
 				String dataskey = ExportConfigUtil.getDataskey(currentExportConfig, si);
-				
-				datas = queryDatas(sql);
+				if(sql != null){
+					datas = queryDatas(sql);
+				}
 				datas = datas==null? new ArrayList<Object>():datas;
 				//设置模版数据集
 				ExportConfigUtil.put(ExportConfigUtil.getTplParameters(currentExportConfig), dataskey, datas);
@@ -122,9 +136,20 @@ public class ExportDisposeImp extends AbstractExportDispose {
 	 * @return
 	 */
 	private List queryDatas(String sql) {
-		List datas=null;
-//		datas = handleService.queryListMapBean(sql, null);
-		return datas;
+		List datalist = null;
+		String filePath = dataFileDir+sql;
+		datalist = (List) cachedb.get(filePath);
+		if(datalist == null){
+			File f = new File(filePath);
+			if(f.exists() && f.isFile()){
+				String text =FileUtil.getFileText(f);
+				datalist = JsonUtil.json2List(text);
+				if(datalist != null){
+					cachedb.put(filePath, datalist);
+				}
+			}
+		}
+		return datalist;
 	}
 	/**
 	 * 查询分页数据
@@ -134,9 +159,20 @@ public class ExportDisposeImp extends AbstractExportDispose {
 	 * @return
 	 */
 	private List queryPageDatas(int currentpage, int perpage, String sql) {
-		List datas = null;
-//		String pagesql = handleService.getPaginationSql(sql, currentpage, perpage);
-//		datas = queryDatas(pagesql);
+		List datas = null;//new ArrayList();
+		int startindex = perpage*(currentpage-1);
+		
+		List datalist = queryDatas(sql);
+		int datasize = datalist.size();
+		
+		if(datasize > startindex){
+			int endindex =startindex+perpage;
+			if(datasize < endindex ){
+				endindex = datasize;
+			}
+			datas = new ArrayList(datalist.subList(startindex, endindex));
+		}
+		
 		return datas;
 	}
 	
@@ -146,9 +182,11 @@ public class ExportDisposeImp extends AbstractExportDispose {
 	 * @return
 	 */
 	private int getDataCount(String sql) {
-		int coutn = 0;
+		List datalist = queryDatas(sql);
+		int coutn = datalist == null ? 0 : datalist.size();
 		return coutn;
 	}
+	
 	/**
 	 * 获取sql
 	 * @param sqlkey
@@ -156,9 +194,9 @@ public class ExportDisposeImp extends AbstractExportDispose {
 	 */
 	private String getSql(String sqlkey) {
 		String sql = "";
-		
 		return sql;
 	}
+	
 	/**
 	 * 处理sql
 	 * @param currentExportConfig
