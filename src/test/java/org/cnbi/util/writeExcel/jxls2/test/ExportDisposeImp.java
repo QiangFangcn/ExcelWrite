@@ -208,7 +208,7 @@ public class ExportDisposeImp extends AbstractExportDispose {
 		if(m.find()){
 			Map<String, Object> map = ExportConfigUtil.getSqlParameters(currentExportConfig);
 			for(String key :  map.keySet()){
-				sql = sql.replaceAll((key.startsWith(":")?":":"")+key, (map.get(key) == null ?"":map.get(key).toString()));
+				sql = sql.replaceAll((key.startsWith(":")?"":":")+key, (map.get(key) == null ?"":map.get(key).toString()));
 			}
 		}
 		return sql;
