@@ -167,18 +167,6 @@ public class POIUtiles {
 					&& isitalic && isstrikeout && istypeOffset && isunderLine){
 				return font;
 			}
-			
-//			if ( font.getBoldweight() == boldWeight 
-//					&& font.getXSSFColor().getARGBHex().equals(color.getARGBHex())
-//					&& font.getFontHeight() == fontSize
-//					&& font.getFontName().equals(fontName)
-//					&& font.getItalic() == italic
-//					&& font.getStrikeout() == strikeout
-//					&& font.getTypeOffset() == typeOffset
-//					&& font.getUnderline() == underLine)
-//			{
-//				return font;
-//			}
 		}
 		return null;
 	}

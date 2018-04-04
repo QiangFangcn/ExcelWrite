@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.cnbi.tools.FileUtil;
 import org.cnbi.tools.JsonUtil;
-import org.cnbi.tools.TimeUtil;
+import org.cnbi.tools.DateTimeUtil;
 import org.cnbi.util.writeExcel.jxls2.util.ExportXSLXUtils;
 
 public class TestPageExport {
@@ -83,7 +83,7 @@ public class TestPageExport {
 			System.gc();
 		}
 		long s2 = System.currentTimeMillis();
-		System.out.println("生成Excel：" + TimeUtil.getDefTime(s2 - s1));
+		System.out.println("生成Excel：" + DateTimeUtil.distanceTime(s2 - s1));
 		
 	}
 	
