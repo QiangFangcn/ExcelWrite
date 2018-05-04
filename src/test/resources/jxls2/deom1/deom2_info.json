@@ -12,7 +12,7 @@
 			"dataskeys": ["datas"],
 			"perpages": [10000],
 			"sqls": ["jxls2/项目.json"]
-		},
+		}
 	}
 }
 

@@ -1,0 +1,10 @@
+{
+  "excels": [{"id": "ryxlsjtjb", "name": "人员效率数据统计表", "modelid": "rlzy", "sheets": ["1"]},
+    {"id":"ysbbndys","name":"预算模板(年度预算)","modelid":"ysmk","sheets":["1","2","3"]},
+    {"id":"jdycbgkg","name":"季度预测报告","modelid":"ysmk","sheets":["1"]}
+  ],
+
+  "year": "2018",
+  "month": "03",
+  "company": "1"
+}
