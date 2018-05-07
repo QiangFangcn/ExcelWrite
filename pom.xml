@@ -66,11 +66,6 @@
             <artifactId>poi-scratchpad</artifactId>
             <version>${poi-scratchpad.version}</version>
         </dependency>
-		<dependency>    
-			<groupId>com.cnbi</groupId>
-			<artifactId>tools</artifactId>
-			<version>[0.0.1,)</version>
-		</dependency>
         <!-- <0!0-0- html 解析包 -0-0>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -85,6 +80,22 @@
             <version>2.4.1</version>
         </dependency>
          -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.1.34</version>
+        </dependency>
+		<dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>de.innosystec</groupId>
+            <artifactId>java-unrar</artifactId>
+            <version>20120903</version>
+        </dependency> 
+         
   </dependencies>
       <build>
         <pluginManagement>
