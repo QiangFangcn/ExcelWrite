@@ -94,6 +94,21 @@
           ]
         }
       }
+    },
+    "cwfxbg": {
+      "name": "财务分析报告",
+      "tplPath": "财务分析报告.xlsx",
+      "sheets": {
+        "2.比较利润表": {
+          "dataKeys": [
+            "datas"
+          ],
+          "sqls": [
+            "financialAnalysisReport20231"
+          ],
+          "orderNumber": "1"
+        }
+      }
     }
   }
 }

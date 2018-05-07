@@ -11,6 +11,7 @@ public class Dimensions {
     private String month;
     private String company;         // 公司编码
     private String companyName;     // 公司名称
+    private String companyCtype;    // 公司的种类，0：集团公司、1：子公司、2：抵消公司(模板有些if需要用到)
     private String excels;          // excels是前端传过来的配置信息, 解析这个得到需要导出哪些Excel，哪些Sheet页
 
     public Dimensions() {
@@ -77,5 +78,13 @@ public class Dimensions {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public String getCompanyCtype() {
+        return companyCtype;
+    }
+
+    public void setCompanyCtype(String companyCtype) {
+        this.companyCtype = companyCtype;
     }
 }
