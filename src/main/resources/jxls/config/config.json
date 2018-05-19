@@ -1,0 +1,129 @@
+{
+  "rlzy": {
+    "ryxlsjtjb": {
+      "name": "人员效率数据统计表",
+      "tplPath": "人员效率数据统计表.xlsx",
+      "sheets": {
+        "人员效率数据统计表": {
+          "dataKeys": [
+            "datas"
+          ],
+          "sqls": [
+            "humanResourcesDepartment2000501"
+          ],
+          "orderNumber": "1"
+        }
+      }
+    }
+  },
+  "ysmk": {
+    "ysbbndys": {
+      "name": "预算报表(年度预算)",
+      "tplPath": "预算报表.xlsx",
+      "outPath": "预算报表(年度预算).xlsx",
+      "sheets": {
+        "逾期应收账款处置": {
+          "dataKeys": [
+            "datas"
+          ],
+          "sqls": [
+            "outExcel20911"
+          ],
+          "orderNumber": "1",
+          "sqlParamList": [
+            {
+              ":sisg": "0"
+            }
+          ]
+        },
+        "呆滞存货处置明细": {
+          "dataKeys": [
+            "datas"
+          ],
+          "sqls": [
+            "outExcel20917"
+          ],
+          "orderNumber": "2",
+          "sqlParamList": [
+            {
+              ":sisg": "0"
+            }
+          ]
+        },
+        "机会与风险": {
+          "dataKeys": [
+            "datas1",
+            "datas2"
+          ],
+          "sqls": [
+            "outExcel20934",
+            "outExcel20935"
+          ],
+          "orderNumber": "3",
+          "sqlParamList": [
+            {
+              ":sisg": "0"
+            },
+            {
+              ":sisg": "0"
+            }
+          ]
+        }
+      }
+    },
+    "jdycbgkg": {
+      "name": "季度预测报告.xlsx",
+      "tplPath": "季度预测报告.xlsx",
+      "sheets": {
+        "股权投资预测": {
+          "dataKeys": [
+            "datas",
+            "explain"
+          ],
+          "sqls": [
+            "ysmkJdyc20505",
+            "ysmkJdycExplains"
+          ],
+          "orderNumber": "1",
+          "sqlParamList": [
+            {},
+            {
+              ":moduleid": "20505",
+              ":scode": "45701010105', '45701010205', '45701010305', '45701020105', '45701020205','45701020305', '45701020405"
+            }
+          ]
+        }
+      }
+    },
+    "cwfxbg": {
+      "name": "财务分析报告",
+      "tplPath": "财务分析报告.xlsx",
+      "sheets": {
+        "2.比较利润表": {
+          "dataKeys": [
+            "datas"
+          ],
+          "sqls": [
+            "financialAnalysisReport20231"
+          ],
+          "orderNumber": "1"
+        }
+      }
+    },
+    "yscyfxbg": {
+      "name": "预算差异分析报告",
+      "tplPath": "预算差异分析报告.xlsx",
+      "sheets": {
+        "边际贡献预算执行情况": {
+          "dataKeys": [
+            "datas"
+          ],
+          "sqls": [
+            "analysisOfBudgetVariances20336"
+          ],
+          "orderNumber": "1"
+        }
+      }
+    }
+  }
+}

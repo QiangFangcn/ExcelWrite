@@ -1,0 +1,19 @@
+{
+  "name" : "纬度",
+  "tplPath" : "jxls2/deom1/deom.xlsx",
+  "outPath" : "jxls2/deom1/demo输出.xlsx",
+  "sheets" : {
+    "产品":{
+      "dataKey" : ["datas"],
+      "pageSize" : [10000],
+      "sql":["jxls2/产品.json"],
+      "context":[]
+    },
+    "项目":{
+      "dataKey": ["datas"],
+      "pageSize": [10000],
+      "sql": ["jxls2/项目.json"],
+      "context":[]
+    }
+  }
+}
