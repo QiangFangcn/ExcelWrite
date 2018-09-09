@@ -109,6 +109,21 @@
           "orderNumber": "1"
         }
       }
+    },
+    "yscyfxbg": {
+      "name": "预算差异分析报告",
+      "tplPath": "预算差异分析报告.xlsx",
+      "sheets": {
+        "边际贡献预算执行情况": {
+          "dataKeys": [
+            "datas"
+          ],
+          "sqls": [
+            "analysisOfBudgetVariances20336"
+          ],
+          "orderNumber": "1"
+        }
+      }
     }
   }
 }

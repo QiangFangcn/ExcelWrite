@@ -1,8 +1,8 @@
 package org.cnbi.util.writeExcel.jxls2.command;
 
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,8 +26,8 @@ import jxl.write.WriteException;
  * 合并单元格命令
  */
 public class MergeCommand extends AbstractCommand {
-    private String cols;    //合并的列数
-    private String rows;    //合并的行数
+    private String cols;            //合并的列数
+    private String rows;            //合并的行数
     private Area area;
     private CellStyle cellStyle;    //第一个单元格的样式
  

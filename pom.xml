@@ -7,7 +7,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <name>readExcel</name>
-    <url>http://maven.apache.org</url>
+    <url>http://maven.apace.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,14 +17,6 @@
         <poi-scratchpad.version>3.12</poi-scratchpad.version>
     </properties>
     <dependencies>
-        <!-- 
-        <dependency>
-            <groupId>com.bstek.ureport</groupId>
-            <artifactId>ureport2-console</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        -->
-
         <dependency>
             <groupId>org.jxls</groupId>
             <artifactId>jxls</artifactId>
@@ -45,7 +37,6 @@
             <artifactId>jxls-reader</artifactId>
             <version>2.0.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -56,23 +47,15 @@
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>${poi-ooxml-schemas.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>${poi.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
             <version>${poi-scratchpad.version}</version>
-        </dependency>
-<<<<<<< HEAD
-        <dependency>
-            <groupId>com.cnbi</groupId>
-            <artifactId>tools</artifactId>
-            <version>[0.0.1,)</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -80,101 +63,46 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.7.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--日志-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <version>1.7.25</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.21</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.8.2</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.8.2</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.lingala.zip4j</groupId>
-            <artifactId>zip4j</artifactId>
-            <version>1.3.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>apache-ant-zip</groupId>
-            <artifactId>apache-ant-zip</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>1.0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cnbi</groupId>
-            <artifactId>cnbi-utils</artifactId>
-            <version>3.3.5-QRKJ-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
-
-=======
->>>>>>> 2297eb568a952615ff80cc0d5bc6b09d068470f7
-        <!-- <0!0-0- html 解析包 -0-0>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.11.1</version>
-        </dependency>
-        -->
-        <!--  csv 解析包
-        <dependency>
-            <groupId>com.univocity</groupId>
-            <artifactId>univocity-parsers</artifactId>
-            <version>2.4.1</version>
-        </dependency>
-         -->
-<<<<<<< HEAD
     </dependencies>
-    <build>
-=======
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.1.34</version>
-        </dependency>
-		<dependency>
-            <groupId>net.lingala.zip4j</groupId>
-            <artifactId>zip4j</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>de.innosystec</groupId>
-            <artifactId>java-unrar</artifactId>
-            <version>20120903</version>
-        </dependency> 
-         
-  </dependencies>
       <build>
->>>>>>> 2297eb568a952615ff80cc0d5bc6b09d068470f7
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -188,5 +116,15 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-    </build>
+          <plugins>
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-compiler-plugin</artifactId>
+                  <configuration>
+                      <source>7</source>
+                      <target>7</target>
+                  </configuration>
+              </plugin>
+          </plugins>
+      </build>
 </project>

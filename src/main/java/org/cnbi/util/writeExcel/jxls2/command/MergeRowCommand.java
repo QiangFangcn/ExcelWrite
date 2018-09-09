@@ -1,8 +1,10 @@
 package org.cnbi.util.writeExcel.jxls2.command;
 
+import java.math.MathContext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,6 +21,8 @@ import org.jxls.common.Context;
 import org.jxls.common.Size;
 import org.jxls.transform.Transformer;
 import org.jxls.transform.poi.PoiTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 使用注意，放在主要area的下面的无用单元格中即可
@@ -34,8 +38,8 @@ import org.jxls.transform.poi.PoiTransformer;
  */
 
 public class MergeRowCommand extends AbstractCommand {
-	
-	public final Log logger = LogFactory.getLog(MergeRowCommand.class); 
+
+	public final Logger logger = LoggerFactory.getLogger( MergeRowCommand.class );
 	
 	public static final String COMMAND_NAME = "mergeRow";
 	public final static String YES = "1";
@@ -43,8 +47,8 @@ public class MergeRowCommand extends AbstractCommand {
 	
 	private String start;				//行的开始行数从 1 开始
 	private String endSign;				//结束标志，标志着到自己设置的CellValue就结束
-	private String mergeBlankCell = NO;	//是否合并中间的空白
-	private String passBlakCell = NO;	//是否跳过中间空白
+	private String mergeBlankCell = NO;	//是否合并中间的空白        默认不合并空白
+	private String passBlakCell = NO;	//是否跳过中间空白          一般写 1
 	private Area area;
 	private CellStyle cellStyle;		//备用，后面可能会设计到样式问题
 	
@@ -106,74 +110,69 @@ public class MergeRowCommand extends AbstractCommand {
 	public Size applyAt(CellRef cellRef, Context context) {
 		Transformer transformer = this.getTransformer();
 		if (!(transformer instanceof PoiTransformer)) {
-			logger.error("不是Poi的Transfomer无法解析合并");
+			logger.error("{} ==> 不是Poi的Transfomer无法解析合并", cellRef);
 			return area.applyAt(cellRef, context);
 		}
-		
 		PoiTransformer poiTransformer = ((PoiTransformer) transformer);
 		Workbook workbook = poiTransformer.getWorkbook();
 		Sheet sheet = workbook.getSheet(cellRef.getSheetName());
-		
 		// 得到当前的列
 		int col = cellRef.getCol();
-		
 		if (!isNumeric(start)) {
-			logger.error("输入的start不是一个数字");
+			logger.error("{} ==> 输入的start不是一个数字", cellRef);
 			return area.applyAt(cellRef, context);
 		}
-		
 		// 得到开始的行
-		int curRowumn = getStartColumn();
-		Row curRow = sheet.getRow(curRowumn);
+		int curRowNum = getStartColumn();
+		Row curRow;
 		// 得到下一行数据
-		Row nextRow = sheet.getRow(curRowumn+1);
+		Row nextRow = sheet.getRow(curRowNum+1);
 		// 结束行数
 		int endNum = 0;
 		// 当前行的值
 		String curCellValue = null;
-		Cell cell = null;
-		Cell nextCell = null;
+		Cell cell;
+		Cell nextCell;
 		//第一次循环找到结束的地方
 		while(true) {
-			curRow = sheet.getRow(curRowumn);
+			curRow = sheet.getRow(curRowNum);
 			//如果获取不到当前行了，那么说明Excel到底了,上行为结束行
 			if(curRow == null) {
-				endNum = curRowumn;
+				endNum = curRowNum;
 				break;
 			}
 			//得到当前列的这个单元格
 			cell = curRow.getCell(col);
 			curCellValue = getCellValue(cell);
 			//如果设置了endSign则会碰到endSign为结束位
-			if(endSign != null && curCellValue.equals(endSign)) {//这样写不好每次就算没有endSign都要进行判断后面需要改写
-				endNum = curRowumn;
+			if(StringUtils.isNotBlank( endSign )  && curCellValue.equals(endSign)) {//这样写不好每次就算没有endSign都要进行判断后面需要改写
+				endNum = curRowNum;
 				break;
 			}
 			//如果不跳过空值，那么就需要碰到空值就结束，或者在上面的循环到Excel结束就结束
 			if(NO.equals(passBlakCell)) {
 				//如果获取到的当前行的CellValue是空的，那么说明合并区域结束了，说明上行为结束行
 				if(curCellValue.equals("")) {
-					endNum = curRowumn;
+					endNum = curRowNum;
 					break;
 				}
 			}
 			//每次结束再递增行
-			curRowumn++;
+			curRowNum++;
 		}
-		
 		logger.info(cellRef.getCellName()+"的"+"当前结束行为"+"-->"+endNum);
+
 		//重置curRowmn到开始
-		curRowumn = getStartColumn();
-		curRow = sheet.getRow(curRowumn);
+		curRowNum = getStartColumn();
+		curRow = sheet.getRow(curRowNum);
 		//为合并做准备
-		int regionStartRow = curRowumn;
+		int regionStartRow = curRowNum;
 		int regionEndRow = 0;
 		String startRowValue = getCellValue(curRow.getCell(col));
 		String nextRowValue = getCellValue(nextRow.getCell(col));	
-		curRow = sheet.getRow(curRowumn);	
-		
+
 		//第二次循环这一列的所有行根据条件进行合并
-		for (int i = curRowumn; i <= endNum; i++) {
+		for (int i = curRowNum; i <= endNum; i++) {
 			curRow = sheet.getRow(i);
 			nextRow = sheet.getRow(i+1);
 			
@@ -191,7 +190,6 @@ public class MergeRowCommand extends AbstractCommand {
 			if(nextRow == null) {
 				nextRowValue = null;
 			}
-			
 			/*
 			 * 如果当前循环到行的value和合并区域开始行的value不相同
 			 * 那么现在行变为新的开始行
@@ -224,7 +222,6 @@ public class MergeRowCommand extends AbstractCommand {
 					break;
 				}
 			}
-			
 		}
 		return area.applyAt(cellRef, context);
 	}
@@ -262,18 +259,18 @@ public class MergeRowCommand extends AbstractCommand {
 			return "";
 		}
 		int cellType = cell.getCellType();
-		if(cellType == 0) {
+		if(cellType == Cell.CELL_TYPE_NUMERIC) {
 			double d = cell.getNumericCellValue();
 			String str = String.valueOf(d);
 			return str;
 		}
-		if(cellType == 1) {
+		if(cellType == Cell.CELL_TYPE_STRING) {
 			return cell.getStringCellValue();
 		}
-		if(cellType == 3) {
+		if(cellType == Cell.CELL_TYPE_BLANK) {
 			return "";
 		}
-		if(cellType == 2) {
+		if(cellType == Cell.CELL_TYPE_FORMULA) {
 			String formula = cell.getCellFormula();
 			return formula;
 		}
