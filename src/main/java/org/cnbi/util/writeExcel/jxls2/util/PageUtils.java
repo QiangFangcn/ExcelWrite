@@ -1,12 +1,12 @@
 package org.cnbi.util.writeExcel.jxls2.util;
 
-import org.cnbi.util.writeExcel.jxls2.bean.Page;
+import org.cnbi.util.writeExcel.jxls2.entity.Page;
 
 import java.util.List;
 
 /**
  * Created by FangQiang on 2018/4/13
- * 产出分类信息的类，这里直接使用了List的分隔，因为哪些数据总归要全部查询出来
+ * 产出分类信息的类，这里直接使用了List的分隔
  */
 public class PageUtils {
     private PageUtils() {}
